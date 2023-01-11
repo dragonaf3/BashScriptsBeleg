@@ -174,10 +174,9 @@ for ((i = 0; i < anzahl; i++)); do
   vagrant ssh vm$i -c "bash /home/vagrant/Auswertung.sh"
 done
 
-#Cronjob anlegen
+#Cronjob anlegen: Einloggen jede Stunde; Auswertung einmal am Tag
 for ((i = 0; i < anzahl; i++)); do
-  vagrant ssh vm$i -c "echo '0 * * * * /home/vagrant/SkriptZumEinloggen.sh' | crontab"
-  vagrant ssh vm$i -c "echo '0 0 * * * /home/vagrant/Auswertung.sh' | crontab"
+  vagrant ssh vm$i -c "printf '* * * * * /home/vagrant/SkriptZumEinloggen.sh\n0 0 * * * /home/vagrant/Auswertung.sh\n' | crontab"
 done
 
 #Fertig
