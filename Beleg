@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+# Deadline: 13.01.2023
+
+mkdir BetaTest
+cd BetaTest/
+
+# Frag den Nutzer nach der gewünschten Anzahl von virtuellen Maschinen
+read -p "Wie viele virtuelle Maschinen möchten Sie erstellen? " anzahl
+
+#Erstellen des Skriptes zum Einloggen Teil 1
+cat <<EOF >anzahl.txt
+$anzahl
+EOF
+
+#Erstellen des Skriptes zum Einloggen Teil 2
+cat <<'EOF' >SkriptZumEinloggen.sh
+#!/usr/bin/env bash
+
+anzahl=$(cat anzahl.txt)
+
+for ((i = 0; i < 50; i++)); do
+  zufallUser=$(($RANDOM % anzahl))
+  zufallVM=$(($RANDOM % anzahl))
+  ssh user$zufallUser@vm$zufallVM touch IchWarHier.txt
+done
+
+EOF
+
+#Erstellen des Auswerteskriptes noch nicht fertig
+cat <<'EOF' >Auswertung.sh
+#!/usr/bin/env bash
+#Auswerte Skripte
+#An Übergabe denken und chmod
+
+#Bitte ändern auf File
+anzahl=$(cat anzahl.txt)
+
+fileName="Auswertung_$(date +"%F_%T").txt"
+
+mkdir Auswertungen
+cd Auswertungen/
+touch $fileName
+
+
+for ((i = 0; i < anzahl; i++)); do
+
+#Log Ins
+  echo "User$i has number of logins:" >>$fileName
+  grep -c "session opened for user user$i" /var/log/auth.log >>$fileName
+  echo "" >>$fileName
+
+  #First Log in
+  echo "First login of User$i :" >>$fileName
+  cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}' | head -1 >>$fileName
+  echo "" >>$fileName
+
+  #Last Log in
+  echo "Last login of User$i :" >>$fileName
+  cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}' | tail -1 >>$fileName
+  echo "" >>$fileName
+
+  #Time Diff
+  # Speichern der Anmeldezeiten in einer Liste
+  logins=$(cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}')
+
+  # Konvertieren der Anmeldezeit in Epochenzeit (Anzahl der Sekunden seit dem 1. Januar 1970)
+  first_login=$(date -d "$(echo "$logins" | head -1)" +%s)
+  last_login=$(date -d "$(echo "$logins" | tail -1)" +%s)
+
+  # Berechnen des Zeitunterschieds in Sekunden
+  diff=$((last_login-first_login))
+
+  # Konvertieren der Sekunden in Stunden, Minuten und Sekunden
+  hours=$((diff / 3600))
+  minutes=$(((diff % 3600) / 60))
+  seconds=$((diff % 60))
+
+  # Ausgabe der Time DIFF
+  echo "The time difference between first and last login was:" >>$fileName
+  printf "%02d:%02d:%02d\n" $hours $minutes $seconds >>$fileName
+  echo "" >>$fileName
+
+  #Average Diff
+  countLogin=$(grep -c "session opened for user user$i" /var/log/auth.log)
+  diffAverage=$((diff / countLogin))
+
+  hours=$((diffAverage / 3600))
+  minutes=$(((diffAverage % 3600) / 60))
+  seconds=$((diffAverage % 60))
+
+  echo "During the first and last login the user logged in on average every:" >>$fileName
+  printf "%02d:%02d:%02d\n" $hours $minutes $seconds >>$fileName
+  echo "" >>$fileName
+
+
+  #Abschluss
+  echo "_____________________________________________________" >>$fileName
+
+done
+EOF
+
+# Erstelle eine neue Vagrant-Umgebung
+vagrant init
+
+# Erstelle den Anfang des Vagrantfile
+cat <<EOF >Vagrantfile
+Vagrant.configure("2") do |config|
+
+EOF
+
+# Erstelle eine Schleife, die die gewünschte Anzahl von virtuellen Maschinen erstellt mit Usern
+for ((i = 0; i < anzahl; i++)); do
+  cat <<EOF >>Vagrantfile
+  config.vm.define "vm$i" do |vm$i|
+    vm$i.vm.box = "hashicorp/bionic64"
+    vm$i.vm.hostname = "vm$i"
+    vm$i.vm.network "private_network",
+      ip:"192.168.56.$((i + 10))",
+      netmask:"21"
+    vm$i.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm$i.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm$i.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm$i.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+EOF
+done
+
+#Ende des Vagrantfile
+cat <<EOF >>Vagrantfile
+end
+EOF
+
+# Starte die Vagrant-Umgebung und erstelle die virtuellen Maschinen
+vagrant up
+
+#Anlegen der IP-Adressen in der Hosts-Datei
+for ((i = 0; i < anzahl; i++)); do
+  for ((h = 0; h < anzahl; h++)); do
+    vagrant ssh vm$i -c "echo '192.168.56.$((h + 10)) vm$h' | sudo tee -a /etc/hosts"
+  done
+done
+
+#Anlegen der Nutzer
+for ((vm_anzahl = 0; vm_anzahl < anzahl; vm_anzahl++)); do
+  for ((user_anzahl = 0; user_anzahl < anzahl; user_anzahl++)); do
+    vagrant ssh vm$vm_anzahl -c "sudo useradd -m -d /home/user$user_anzahl/ -s /bin/bash -G sudo user$user_anzahl"
+    vagrant ssh vm$vm_anzahl -c "echo user$user_anzahl:vagrant | sudo chpasswd"
+  done
+done
+
+#Erstellen der Keys, sowie übertragen auf alle Maschinen und Benutzern
+for ((i = 0; i < anzahl; i++)); do
+  vagrant ssh vm$i -c "ssh-keygen -t ecdsa -q -f /home/vagrant/.ssh/id_ecdsa -N ''"
+  for ((h = 0; h < anzahl; h++)); do
+    for ((k = 0; k < anzahl; k++)); do
+      vagrant ssh vm$i -c "sshpass -p vagrant ssh-copy-id -i /home/vagrant/.ssh/id_ecdsa.pub -o StrictHostKeyChecking=no user$k@vm$h"
+    done
+  done
+done
+
+#Ausführen des SkriptZumEinloggen.sh
+for ((i = 0; i < anzahl; i++)); do
+  vagrant ssh vm$i -c "bash /home/vagrant/SkriptZumEinloggen.sh"
+done
+
+#Ausführen der Auswertung.sh
+for ((i = 0; i < anzahl; i++)); do
+  vagrant ssh vm$i -c "bash /home/vagrant/Auswertung.sh"
+done
+
+#Cronjob anlegen
+for ((i = 0; i < anzahl; i++)); do
+  vagrant ssh vm$i -c "echo '0 * * * * /home/vagrant/SkriptZumEinloggen.sh' | crontab"
+  vagrant ssh vm$i -c "echo '0 0 * * * /home/vagrant/Auswertung.sh' | crontab"
+done
+
+#Fertig
+echo "Fertig :)"
