@@ -27,7 +27,7 @@ done
 
 EOF
 
-#Erstellen des Auswerteskriptes noch nicht fertig
+#Erstellen des Auswerteskriptes
 cat <<'EOF' >Auswertung.sh
 #!/usr/bin/env bash
 #Auswerte Skripte
