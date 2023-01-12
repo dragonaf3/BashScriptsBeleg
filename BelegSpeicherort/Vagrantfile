@@ -1,0 +1,163 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "vm0" do |vm0|
+    vm0.vm.box = "hashicorp/bionic64"
+    vm0.vm.hostname = "vm0"
+    vm0.vm.network "private_network",
+      ip:"192.168.56.10",
+      netmask:"21"
+    vm0.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm0.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm0.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm0.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm1" do |vm1|
+    vm1.vm.box = "hashicorp/bionic64"
+    vm1.vm.hostname = "vm1"
+    vm1.vm.network "private_network",
+      ip:"192.168.56.11",
+      netmask:"21"
+    vm1.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm1.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm1.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm1.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm2" do |vm2|
+    vm2.vm.box = "hashicorp/bionic64"
+    vm2.vm.hostname = "vm2"
+    vm2.vm.network "private_network",
+      ip:"192.168.56.12",
+      netmask:"21"
+    vm2.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm2.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm2.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm2.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm3" do |vm3|
+    vm3.vm.box = "hashicorp/bionic64"
+    vm3.vm.hostname = "vm3"
+    vm3.vm.network "private_network",
+      ip:"192.168.56.13",
+      netmask:"21"
+    vm3.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm3.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm3.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm3.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm4" do |vm4|
+    vm4.vm.box = "hashicorp/bionic64"
+    vm4.vm.hostname = "vm4"
+    vm4.vm.network "private_network",
+      ip:"192.168.56.14",
+      netmask:"21"
+    vm4.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm4.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm4.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm4.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm5" do |vm5|
+    vm5.vm.box = "hashicorp/bionic64"
+    vm5.vm.hostname = "vm5"
+    vm5.vm.network "private_network",
+      ip:"192.168.56.15",
+      netmask:"21"
+    vm5.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm5.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm5.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm5.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm6" do |vm6|
+    vm6.vm.box = "hashicorp/bionic64"
+    vm6.vm.hostname = "vm6"
+    vm6.vm.network "private_network",
+      ip:"192.168.56.16",
+      netmask:"21"
+    vm6.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm6.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm6.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm6.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm7" do |vm7|
+    vm7.vm.box = "hashicorp/bionic64"
+    vm7.vm.hostname = "vm7"
+    vm7.vm.network "private_network",
+      ip:"192.168.56.17",
+      netmask:"21"
+    vm7.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm7.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm7.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm7.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm8" do |vm8|
+    vm8.vm.box = "hashicorp/bionic64"
+    vm8.vm.hostname = "vm8"
+    vm8.vm.network "private_network",
+      ip:"192.168.56.18",
+      netmask:"21"
+    vm8.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm8.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm8.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm8.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+  config.vm.define "vm9" do |vm9|
+    vm9.vm.box = "hashicorp/bionic64"
+    vm9.vm.hostname = "vm9"
+    vm9.vm.network "private_network",
+      ip:"192.168.56.19",
+      netmask:"21"
+    vm9.vm.provision "file", source: "./anzahl.txt", destination: "~/anzahl.txt"
+    vm9.vm.provision "file", source: "./SkriptZumEinloggen.sh", destination: "~/SkriptZumEinloggen.sh"
+    vm9.vm.provision "file", source: "./Auswertung.sh", destination: "~/Auswertung.sh"
+    vm9.vm.provision "shell", inline: <<-SHELL
+      sudo chmod 777 /home/vagrant/SkriptZumEinloggen.sh
+      sudo chmod 777 /home/vagrant/Auswertung.sh
+      sudo apt install sshpass
+    SHELL
+  end
+
+end
