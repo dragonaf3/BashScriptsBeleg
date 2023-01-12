@@ -1,0 +1,160 @@
+User0 has number of logins:
+26
+
+First login of User0 :
+Jan 12 18:24:00
+
+Last login of User0 :
+Jan 12 20:19:16
+
+The time difference between first and last login was:
+01:55:16
+
+During the first and last login the user logged in on average every:
+00:04:26
+
+_____________________________________________________
+User1 has number of logins:
+34
+
+First login of User1 :
+Jan 12 18:24:10
+
+Last login of User1 :
+Jan 12 20:19:46
+
+The time difference between first and last login was:
+01:55:36
+
+During the first and last login the user logged in on average every:
+00:03:24
+
+_____________________________________________________
+User2 has number of logins:
+28
+
+First login of User2 :
+Jan 12 18:24:21
+
+Last login of User2 :
+Jan 12 20:19:43
+
+The time difference between first and last login was:
+01:55:22
+
+During the first and last login the user logged in on average every:
+00:04:07
+
+_____________________________________________________
+User3 has number of logins:
+24
+
+First login of User3 :
+Jan 12 18:24:32
+
+Last login of User3 :
+Jan 12 20:19:37
+
+The time difference between first and last login was:
+01:55:05
+
+During the first and last login the user logged in on average every:
+00:04:47
+
+_____________________________________________________
+User4 has number of logins:
+28
+
+First login of User4 :
+Jan 12 18:24:44
+
+Last login of User4 :
+Jan 12 20:18:20
+
+The time difference between first and last login was:
+01:53:36
+
+During the first and last login the user logged in on average every:
+00:04:03
+
+_____________________________________________________
+User5 has number of logins:
+30
+
+First login of User5 :
+Jan 12 18:24:54
+
+Last login of User5 :
+Jan 12 20:18:24
+
+The time difference between first and last login was:
+01:53:30
+
+During the first and last login the user logged in on average every:
+00:03:47
+
+_____________________________________________________
+User6 has number of logins:
+24
+
+First login of User6 :
+Jan 12 18:25:05
+
+Last login of User6 :
+Jan 12 20:17:19
+
+The time difference between first and last login was:
+01:52:14
+
+During the first and last login the user logged in on average every:
+00:04:40
+
+_____________________________________________________
+User7 has number of logins:
+30
+
+First login of User7 :
+Jan 12 18:25:15
+
+Last login of User7 :
+Jan 12 20:19:02
+
+The time difference between first and last login was:
+01:53:47
+
+During the first and last login the user logged in on average every:
+00:03:47
+
+_____________________________________________________
+User8 has number of logins:
+32
+
+First login of User8 :
+Jan 12 18:25:26
+
+Last login of User8 :
+Jan 12 20:19:33
+
+The time difference between first and last login was:
+01:54:07
+
+During the first and last login the user logged in on average every:
+00:03:33
+
+_____________________________________________________
+User9 has number of logins:
+28
+
+First login of User9 :
+Jan 12 18:25:37
+
+Last login of User9 :
+Jan 12 20:19:35
+
+The time difference between first and last login was:
+01:53:58
+
+During the first and last login the user logged in on average every:
+00:04:04
+
+_____________________________________________________
