@@ -2,8 +2,8 @@
 
 # Deadline: 13.01.2023
 
-mkdir Beleg
-cd Beleg/
+mkdir BelegSpeicherort
+cd BelegSpeicherort/
 
 # Frag den Nutzer nach der gewünschten Anzahl von virtuellen Maschinen
 read -p "Wie viele virtuelle Maschinen möchten Sie erstellen? " anzahl
