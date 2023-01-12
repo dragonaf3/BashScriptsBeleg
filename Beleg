@@ -2,21 +2,24 @@
 
 # Deadline: 13.01.2023
 
-mkdir BetaTest
-cd BetaTest/
+mkdir Beleg
+cd Beleg/
 
 # Frag den Nutzer nach der gewünschten Anzahl von virtuellen Maschinen
 read -p "Wie viele virtuelle Maschinen möchten Sie erstellen? " anzahl
 
-#Erstellen des Skriptes zum Einloggen Teil 1
+#Erstellen der anzahl.txt Datei, welche als feste Variabel der beiden folgenden Skripte gilt
+#wird beim Erstellen der Maschinen an die Maschinen übergeben
 cat <<EOF >anzahl.txt
 $anzahl
 EOF
 
-#Erstellen des Skriptes zum Einloggen Teil 2
+#Erstellen des Skriptes zum Einloggen
+#wird beim Erstellen der Maschinen an die Maschinen übergeben
 cat <<'EOF' >SkriptZumEinloggen.sh
 #!/usr/bin/env bash
 
+#Wert, welcher aus der txt Datei ausgelesen wird
 anzahl=$(cat anzahl.txt)
 
 for ((i = 0; i < 50; i++)); do
@@ -28,43 +31,42 @@ done
 EOF
 
 #Erstellen des Auswerteskriptes
+#wird beim Erstellen der Maschinen an die Maschinen übergeben
 cat <<'EOF' >Auswertung.sh
 #!/usr/bin/env bash
-#Auswerte Skripte
-#An Übergabe denken und chmod
 
-#Bitte ändern auf File
+#Wert, welcher aus der txt Datei ausgelesen wird
 anzahl=$(cat anzahl.txt)
 
+#Aktuelles Datum mit Uhrzeit als Datei-Name
 fileName="Auswertung_$(date +"%F_%T").txt"
 
 mkdir Auswertungen
 cd Auswertungen/
 touch $fileName
 
-
 for ((i = 0; i < anzahl; i++)); do
 
-#Log Ins
+#Ausgabe der Anzahl der Logins
   echo "User$i has number of logins:" >>$fileName
   grep -c "session opened for user user$i" /var/log/auth.log >>$fileName
   echo "" >>$fileName
 
-  #First Log in
+#Ausgabe des ersten Logins mit Zeitangabe
   echo "First login of User$i :" >>$fileName
   cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}' | head -1 >>$fileName
   echo "" >>$fileName
 
-  #Last Log in
+#Ausgabe des letzten Logins mit Zeitangabe
   echo "Last login of User$i :" >>$fileName
   cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}' | tail -1 >>$fileName
   echo "" >>$fileName
 
-  #Time Diff
+#Ausgabe der Zeitdifferenz des ersten Logins und letzten Logins
   # Speichern der Anmeldezeiten in einer Liste
   logins=$(cat /var/log/auth.log | grep "user$i" | awk '{print $1, $2, $3}')
 
-  # Konvertieren der Anmeldezeit in Epochenzeit (Anzahl der Sekunden seit dem 1. Januar 1970)
+  # Konvertieren der Anmeldezeiten in die Epochenzeit, zum rechnen damit (Anzahl der Sekunden seit dem 1. Januar 1970)
   first_login=$(date -d "$(echo "$logins" | head -1)" +%s)
   last_login=$(date -d "$(echo "$logins" | tail -1)" +%s)
 
@@ -76,19 +78,22 @@ for ((i = 0; i < anzahl; i++)); do
   minutes=$(((diff % 3600) / 60))
   seconds=$((diff % 60))
 
-  # Ausgabe der Time DIFF
+  # Ausgabe der der Zeitdifferenz
   echo "The time difference between first and last login was:" >>$fileName
   printf "%02d:%02d:%02d\n" $hours $minutes $seconds >>$fileName
   echo "" >>$fileName
 
-  #Average Diff
+#Ausgabe der durchschnittlichen Zeitdifferenz der Logins
+  #Speichern der Login-Anzahl in einer Variable und Berechnung der durchschnittlichen Zeitdifferenz (noch in Sekunden)
   countLogin=$(grep -c "session opened for user user$i" /var/log/auth.log)
   diffAverage=$((diff / countLogin))
 
+  #Wieder umrechnen in Stunden, Minuten, Sekunden
   hours=$((diffAverage / 3600))
   minutes=$(((diffAverage % 3600) / 60))
   seconds=$((diffAverage % 60))
 
+  #Ausgabe der Zeitdifferenz
   echo "During the first and last login the user logged in on average every:" >>$fileName
   printf "%02d:%02d:%02d\n" $hours $minutes $seconds >>$fileName
   echo "" >>$fileName
@@ -109,7 +114,7 @@ Vagrant.configure("2") do |config|
 
 EOF
 
-# Erstelle eine Schleife, die die gewünschte Anzahl von virtuellen Maschinen erstellt mit Usern
+# Erstelle eine Schleife, die die gewünschte Anzahl von virtuellen Maschinen erstellt
 for ((i = 0; i < anzahl; i++)); do
   cat <<EOF >>Vagrantfile
   config.vm.define "vm$i" do |vm$i|
@@ -174,7 +179,7 @@ for ((i = 0; i < anzahl; i++)); do
   vagrant ssh vm$i -c "bash /home/vagrant/Auswertung.sh"
 done
 
-#Cronjob anlegen: Einloggen jede Stunde; Auswertung einmal am Tag
+#Cronjob anlegen: Einloggen jede Minute; Auswertung nur einmal am Tag
 for ((i = 0; i < anzahl; i++)); do
   vagrant ssh vm$i -c "printf '* * * * * /home/vagrant/SkriptZumEinloggen.sh\n0 0 * * * /home/vagrant/Auswertung.sh\n' | crontab"
 done
